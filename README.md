@@ -22,3 +22,16 @@ The data was optained from Dukascopy
 * Right now we only create the tables askPrices and bidPrices. We might have to create a third table in the datase with meta info as to on which stock exchange the stock is traded and in what currency... But this could be done manually.
 
 * Actual orders for a user should be in a database separately created for that specific user.
+
+
+# Start of simple server that will get you price-data
+**node get-prices.js**
+/api/:symbol/:askOrBid/:granularity/:start/:end
+Try:
+http://localhost:3000/api/AAPL/ask/seconds/2019-01-01_14:30/2019-01-02_14:32
+http://localhost:3000/api/AAPL/ask/minutes/2019-01-01_14:30/2019-01-02_14:32
+http://localhost:3000/api/AAPL/ask/minutes-detailed/2019-01-01_14:30/2019-01-02_14:32
+
+Interpolation to seconds works (and there should not be a seconds-detailed).
+
+Interpolation/rounding to bigger granularites like hours, hours-detailed, days, days-detailed not implemented yet.
