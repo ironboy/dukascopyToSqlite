@@ -21,11 +21,11 @@ module.exports = class DB {
   }
 
   async all(...args) {
-    return await this.all('run', ...args);
+    return await this.runner('all', ...args);
   }
 
   async each(...args) {
-    return await this.each('run', ...args);
+    return await this.runner('each', ...args);
   }
 
 }
