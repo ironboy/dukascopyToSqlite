@@ -1,0 +1,2 @@
+Here so that the databases folder is created on git clone.
+(Since git does not clone empty directories and we ignore the database files.)
