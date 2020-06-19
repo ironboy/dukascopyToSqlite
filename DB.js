@@ -7,13 +7,25 @@ module.exports = class DB {
     this.db = new sqlite3.Database(path);
   }
 
-  run(query, params) {
+  runner(method, query, params) {
     return new Promise(res => {
-      this.db.run(query, params, (err, result) => {
+      this.db[method](query, params, (err, result) => {
         if (err) { throw (new Error(err)); }
         res(result);
       })
     });
+  }
+
+  async run(...args) {
+    return await this.runner('run', ...args);
+  }
+
+  async all(...args) {
+    return await this.all('run', ...args);
+  }
+
+  async each(...args) {
+    return await this.each('run', ...args);
   }
 
 }
