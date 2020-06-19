@@ -28,8 +28,11 @@ The data was optained from Dukascopy
 **node get-prices.js**
 /api/:symbol/:askOrBid/:granularity/:start/:end
 Try:
+
 http://localhost:3000/api/AAPL/ask/seconds/2019-01-01_14:30/2019-01-02_14:32
+
 http://localhost:3000/api/AAPL/ask/minutes/2019-01-01_14:30/2019-01-02_14:32
+
 http://localhost:3000/api/AAPL/ask/minutes-detailed/2019-01-01_14:30/2019-01-02_14:32
 
 Interpolation to seconds works (and there should not be a seconds-detailed).
