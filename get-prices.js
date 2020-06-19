@@ -37,7 +37,7 @@ app.get('/api/:symbol/:askOrBid/:granularity/:start/:end', async (req, res) => {
 function simplify(r) {
   return r.map(x => ({
     time: x.time,
-    price: Math.round((x.open + x.close) / 0.0002) / 10000
+    price: Math.round((x.open + x.close) / 0.002) / 1000
   }));
 }
 
@@ -49,13 +49,13 @@ function interpolateToSeconds(r) {
     let at15 = x.close > x.open ? x.low : x.high;
     let seconds = [];
     for (let i = 0; i <= 15; i++) {
-      seconds.push(Math.round((x.open + ((at15 - x.open) / 15) * i) / 0.0001) / 10000);
+      seconds.push(Math.round((x.open + ((at15 - x.open) / 15) * i) / 0.001) / 1000);
     }
     for (let i = 16; i <= 45; i++) {
-      seconds.push(Math.round((at15 + ((at45 - at15) / 31) * (i - 15)) / 0.0001) / 10000);
+      seconds.push(Math.round((at15 + ((at45 - at15) / 31) * (i - 15)) / 0.001) / 1000);
     }
     for (let i = 46; i <= 59; i++) {
-      seconds.push(Math.round((at45 + ((x.close - at45) / 13) * (i - 46)) / 0.0001) / 10000);
+      seconds.push(Math.round((at45 + ((x.close - at45) / 13) * (i - 46)) / 0.001) / 1000);
     }
     newR = [...newR, ...seconds.map((x, i) => ({ time: time + (i + '').padStart(2, '0'), price: x }))];
   }
