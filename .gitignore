@@ -1,3 +1,6 @@
+# Should not be needed - there should be import scripts to recreate them
+databases/*db
+
 # Logs
 logs
 *.log
