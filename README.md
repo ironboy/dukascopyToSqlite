@@ -41,3 +41,6 @@ Added filling holes/gaps to import (do not now why the are holes... Low trade? T
 
 Interpolation/rounding to bigger granularites like hours, hours-detailed, days, days-detailed not implemented yet.
 
+Added joining ask and bid into one table (after fixing gaps/holes), this is the way to go...
+But get-prices not rewritten for querying a single table yet...
+(When done we can remove askPrices and bidPrices tables directly after import...)

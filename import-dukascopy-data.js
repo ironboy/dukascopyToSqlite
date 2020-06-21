@@ -13,7 +13,7 @@ const dirPath = path.join(__dirname, 'dukascopy-data');
   // remove database file it exists
   fs.existsSync(dbPath) && fs.unlinkSync(dbPath);
 
-  // create database (file + our two tables)
+  // create database (file + our three tables)
   let db = new DB(dbPath);
   let query = /*sql*/`CREATE TABLE askPrices(
     symbol TEXT     NOT NULL,
@@ -30,6 +30,31 @@ const dirPath = path.join(__dirname, 'dukascopy-data');
   );`
   await db.run(query);
   query = query.split('askPrices').join('bidPrices');
+  await db.run(query);
+  // Large table with bod bid and ask data per line
+  query = /*sql*/`
+    CREATE TABLE prices (
+      symbol      TEXT NOT NULL,
+      gmtTime      DATETIME NOT NULL,
+      askOpen      DOUBLE NOT NULL,
+      askHigh      DOUBLE NOT NULL,
+      askLow       DOUBLE NOT NULL,
+      askClose     DOUBLE NOT NULL,
+      askMedian NOT NULL,
+      askVolume    DOUBLE NOT NULL,
+      bidOpen      DOUBLE NOT NULL,
+      bidHigh      DOUBLE NOT NULL,
+      bidLow       DOUBLE NOT NULL,
+      bidClose     DOUBLE NOT NULL,
+      bidMedian NOT NULL,
+      bidVolume    DOUBLE NOT NULL,
+      spreadMedian NOT NULL,
+      PRIMARY KEY (
+          symbol,
+          gmtTime
+      )
+    );
+  `;
   await db.run(query);
 
   // import data from files
@@ -73,4 +98,27 @@ const dirPath = path.join(__dirname, 'dukascopy-data');
     //await patchHoles(db, symbol, askOrBid);
     console.log('Done');
   }
+  // Join askPrices and bidPrices into prices table
+  console.log('Joining ask and bid prices into new table');
+  await db.run(/*sql*/`
+    INSERT INTO prices SELECT 
+    a.symbol, 
+    a.gmtTime, 
+    a.open askOpen, 
+    a.high askHigh, 
+    a.low askLow, 
+    a.close askClose, 
+    ROUND((a.open+a.close)/2,3) askMedian,
+    a.volume askVolume,
+    b.open bidOpen,
+    b.high bidHigh,
+    b.low bidLow,
+    b.close bidClose,
+    ROUND((b.open+b.close)/2,3) bidMedian,
+    b.volume bidVolume,
+    ROUND(ABS((a.open+a.close)/2 - (b.open+b.close)/2),4) spreadMedian
+    FROM askPrices AS a, bidPrices AS b 
+    WHERE a.gmtTime = b.gmtTime AND a.symbol = b.symbol
+  `);
+  console.log('All done!');
 })();
