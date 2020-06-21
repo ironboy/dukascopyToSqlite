@@ -37,4 +37,7 @@ http://localhost:3000/api/AAPL/ask/minutes-detailed/2019-01-01_14:30/2019-01-02_
 
 Interpolation to seconds works (and there should not be a seconds-detailed).
 
+Added filling holes/gaps to import (do not now why the are holes... Low trade? Trade temporarily stopped because of news flash etc?)
+
 Interpolation/rounding to bigger granularites like hours, hours-detailed, days, days-detailed not implemented yet.
+

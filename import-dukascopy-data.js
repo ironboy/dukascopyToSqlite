@@ -38,19 +38,39 @@ const dirPath = path.join(__dirname, 'dukascopy-data');
   for (let file of files) {
     console.log('Importing', file)
     let data = fs.readFileSync(path.join(dirPath, file), 'utf-8');
-    let stockName = '"' + file.split('.')[0] + '"';
+    let symbol = '"' + file.split('.')[0] + '"';
     let askOrBid = file.includes('_ASK_') ? 'ask' : 'bid';
     let fixedData = [];
     data = data.split('\r').join(''); // remove carriage returns
+    let lastTime = 0;
     for (let line of data.split('\n').slice(1)) {
       // fix us date-format to iso and remove ms
       let dt = line.split(/[\.\s]/, 4);
       dt = '"' + dt[2] + '-' + dt[1] + '-' + dt[0] + ' ' + dt[3] + '"';
-      fixedData.push('(' + stockName + ',' + dt + ','
+      // fixing holes/gaps
+      let time = new Date(dt.slice(1, -1) + ' GMT').getTime();
+      if (time - lastTime !== 60000 && time - lastTime < 10 * 60 * 60 * 1000) {
+        let gapLength = (time - lastTime - 60000) / 60000;
+        // push from previous value
+        let prev = fixedData[fixedData.length - 1];
+        let first, last;
+        for (let t = lastTime + 60000; t < time; t += 60000) {
+          let d = new Date(t).toISOString().split('T').join(' ').split('.')[0];
+          first = first || d;
+          last = d;
+          let n = prev.slice(0, prev.indexOf(',"') + 2) + d + prev.slice(prev.indexOf(':00",') + 3);
+          fixedData.push(n);
+        }
+        console.log(symbol, askOrBid, 'Filling a', gapLength, ' minute gap between ', first, 'and', last);
+      }
+      lastTime = time;
+      // pushing to correctly formatted values
+      fixedData.push('(' + symbol + ',' + dt + ','
         + line.split(',').slice(1).join(',') + ')');
     }
-    await db.run(`INSERT INTO ${askOrBid}prices VALUES\n`
+    await db.run(`INSERT INTO ${askOrBid}Prices VALUES\n`
       + fixedData.join(',\n'));
+    //await patchHoles(db, symbol, askOrBid);
     console.log('Done');
   }
 })();
