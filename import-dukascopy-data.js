@@ -40,15 +40,15 @@ const dirPath = path.join(__dirname, 'dukascopy-data');
       askHigh      DOUBLE NOT NULL,
       askLow       DOUBLE NOT NULL,
       askClose     DOUBLE NOT NULL,
-      askMedian NOT NULL,
+      askMedian    DOUBLE NOT NULL,
       askVolume    DOUBLE NOT NULL,
       bidOpen      DOUBLE NOT NULL,
       bidHigh      DOUBLE NOT NULL,
       bidLow       DOUBLE NOT NULL,
       bidClose     DOUBLE NOT NULL,
-      bidMedian NOT NULL,
+      bidMedian    DOUBLE NOT NULL,
       bidVolume    DOUBLE NOT NULL,
-      spreadMedian NOT NULL,
+      spreadMedian DOUBLE NOT NULL,
       PRIMARY KEY (
           symbol,
           gmtTime
